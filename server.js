@@ -1,25 +1,89 @@
 // Importar pacotes/bibliotecas
 import express from "express";
 import dotenv from "dotenv";
+import dados from "./src/data/dados.js";
 
-// Criar aplicação com Express e configurar para aceitar JSON
+// E então acesse os dados assim:
+const { bruxos, casas, varinhas, animais, pocoes } = dados;
+
+// Criar a aplicacao/server com express e falar que aceita o JSON
 const app = express();
 app.use(express.json());
 
-// Carregar variáveis de ambiente e definir constante para porta do servidor
-dotenv.config();
-const serverPort = process.env.PORT || 3000;
+// Criar a const da porta
+const serverPort = 3000;
 
-// Rota principal GET para "/"
+// Rota raiz/principal para ver se esta tudo OK com o server
 app.get("/", (req, res) => {
-    res.send("🚀 Servidor funcionando...");
+    res.send("Servidor funcionando...");
+})
+
+// Get com filtros
+app.get('/bruxos', (req, res) => {
+    const { casa, ano, especialidade, nome } = req.query;
+    let resultado = bruxos;
+  
+    if (casa) {
+      resultado = resultado.filter(b => b.casa.toLowerCase() === casa.toLowerCase());
+    }
+  
+    if (ano) {
+      resultado = resultado.filter(b => b.ano == ano);
+    }
+  
+    if (especialidade) {
+      resultado = resultado.filter(b => b.especialidade.toLowerCase().includes(especialidade.toLowerCase()));
+    }
+  
+    if (nome) {
+      resultado = resultado.filter(b => b.nome.toLowerCase().includes(nome.toLowerCase()));
+    }
+  
+    res.status(200).json({
+      total: resultado.length,
+      data: resultado
+    });
 });
 
+// Post
+app.post('/bruxos', (req, res) => {
+    // Acessando dados do body
+    const { nome, casa, ano, varinha, mascote, patrono, especialidade, vivo } = req.body;
+    
+    console.log('Dados recebidos:', req.body);
+    
+    // Validação básica
+    if (!nome || !casa) {
+        return res.status(400).json({
+            success: false,
+            message: "Nome e casa são obrigatórios para um bruxo!"
+        });
+    }
+    
+    // Criar novo bruxo
+    const novoBruxo = {
+        id: bruxos.length + 1,
+        nome,
+        casa: casa,
+        ano: parseInt(ano),
+        varinha: varinha,
+        mascote: mascote,
+        patrono: patrono,
+        especialidade: especialidade || "Em desenvolvimento",
+        vivo: vivo
+    };
+    
+    // Adicionar à lista de bruxos
+    bruxos.push(novoBruxo);
+    
+    res.status(201).json({
+        success: true,
+        message: "Novo bruxo adicionado a Hogwarts!",
+        data: novoBruxo
+    });
+});
 
-// Aqui vão todas suas Rotas
-
-
-// Iniciar servidor escutando na porta definida
+// Iniciar o servidor
 app.listen(serverPort, () => {
-    console.log(`🚀 Servidor rodando em http://localhost:${serverPort} 🚀`);
+    console.log("Servidor esta rodando...")
 });
