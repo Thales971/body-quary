@@ -53,7 +53,7 @@ app.post('/bruxos', (req, res) => {
     console.log('Dados recebidos:', req.body);
     
     // Validação básica
-    if (!nome || !casa) {
+    if (nome === false || !casa) {
         return res.status(400).json({
             success: false,
             message: "Nome e casa são obrigatórios para um bruxo!"
