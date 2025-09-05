@@ -3,6 +3,9 @@ import express from "express";
 import dotenv from "dotenv";
 import dados from "./src/data/dados.js";
 
+
+dotenv.config();
+const serverPort=process.env.PORT || 3000;
 // E então acesse os dados assim:
 const { bruxos, casas, varinhas, animais, pocoes } = dados;
 
@@ -11,7 +14,7 @@ const app = express();
 app.use(express.json());
 
 // Criar a const da porta
-const serverPort = 3000;
+
 
 // Rota raiz/principal para ver se esta tudo OK com o server
 app.get("/", (req, res) => {
@@ -131,18 +134,18 @@ app.get ('/varinhas', (req, res) => {
         });
     },);
 
-    app.get ('pocoes', (req, res) => {
+    app.get ('/pocoes', (req, res) => {
         const { nome, efeito, duracao } = req.query;
         let resultado = pocoes; 
 
         if (nome) {
-          resultado = resultado.filter(p => p.nome.toLowerCase().includes(nome.toLowerCase()));
+          resultado = resultado.filter((p) => p.nome.toLowerCase().includes(nome.toLowerCase()));
         }
         if (efeito) {  
-          resultado = resultado.filter(p => p.efeito.toLowerCase().includes(efeito.toLowerCase()));
+          resultado = resultado.filter((p) => p.efeito.toLowerCase().includes(efeito.toLowerCase()));
         }
         if (duracao) {
-          resultado = resultado.filter(p => p.duracao.toLowerCase().includes(duracao.toLowerCase()));
+          resultado = resultado.filter((p) => p.duracao.toLowerCase().includes(duracao.toLowerCase()));
         }
         res.status(200).json({
           total: resultado.length,
@@ -151,14 +154,14 @@ app.get ('/varinhas', (req, res) => {
     });
 
     app.get ('/animais', (req, res) => {
-        const { nome, tipo, cor, dono } = req.query;
+        const { nome, tipo, } = req.query;
         let resultado = animais; 
         
         if (nome) {
-          resultado = resultado.filter(a => a.nome.toLowerCase().includes(nome.toLowerCase()));
+          resultado = resultado.filter((a) => a.nome.toLowerCase().includes(nome.toLowerCase()));
         }
         if (tipo) {  
-          resultado = resultado.filter(a => a.tipo.toLowerCase().includes(tipo.toLowerCase()));
+          resultado = resultado.filter((a) => a.tipo.toLowerCase().includes(tipo.toLowerCase()));
         }
         res.status(200).json({
           total: resultado.length,
